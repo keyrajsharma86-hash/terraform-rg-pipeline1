@@ -1,0 +1,124 @@
+name: "Terraform CI/CD Pipeline"
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  TF_VERSION: '1.6.0'
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_USE_OIDC: true
+
+jobs:
+  # Job 1: Terraform Plan (PR पर चलेगा)
+  terraform-plan:
+    name: 'Terraform Plan'
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: 'Checkout Code'
+        uses: actions/checkout@v4
+
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 'Azure Login via OIDC'
+        uses: azure/login@v2
+        with:
+          client-id: f6d63407-2359-4b4b-8a1d-82326d6ed05b
+          tenant-id: 18d71235-29d4-4066-8c1c-633f3467b508
+          subscription-id: 09313c5c-930a-453c-a90c-32ef23577e6b
+
+      - name: 'Terraform Init'
+        run: terraform init
+
+      - name: 'Terraform Validate'
+        run: terraform validate
+
+      - name: 'Terraform Plan'
+        id: plan
+        run: terraform plan -no-color -out=tfplan
+        continue-on-error: true
+
+      - name: 'Upload Plan Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+
+      - name: 'Comment Plan on PR'
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const planOutput = `${{ steps.plan.outputs.stdout }}`;
+            const summary = planOutput.split('\n').filter(line => 
+              line.includes('Plan:') || line.includes('Changes to') || line.includes('No changes')
+            ).join('\n');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🧾 Terraform Plan Summary\n\n\`\`\`hcl\n${summary}\n\`\`\`\n\n✅ Plan generated successfully. Merge this PR to apply the changes.`
+            });
+
+  # Job 2: Terraform Apply (main branch पर push पर चलेगा)
+  terraform-apply:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: 'production'  # Manual approval के लिए
+    needs: [terraform-plan]
+    steps:
+      - name: 'Checkout Code'
+        uses: actions/checkout@v4
+
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 'Azure Login via OIDC'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'Download Plan Artifact'
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: .
+
+      - name: 'Terraform Init'
+        run: terraform init
+
+      - name: 'Terraform Apply'
+        run: terraform apply -auto-approve tfplan
+
+      - name: 'Get Outputs'
+        id: outputs
+        run: |
+          echo "::set-output name=outputs::$(terraform output -json)"
+        continue-on-error: true
+
+      - name: 'Print Outputs'
+        if: steps.outputs.outputs != ''
+        run: |
+          echo "## 📋 Terraform Outputs" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          echo '${{ steps.outputs.outputs }}' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

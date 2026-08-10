@@ -26,6 +26,8 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: 'Checkout Code'
+
+      
         uses: actions/checkout@v4
 
       - name: 'Setup Terraform'

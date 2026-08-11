@@ -11,6 +11,7 @@ terraform {
     container_name = "backendcontainer"
     key = "tfstate"
      use_azuread_auth = true
+     
   }
 }
 

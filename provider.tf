@@ -10,6 +10,7 @@ terraform {
     storage_account_name = "backendstoragekeyraj"
     container_name = "backendcontainer"
     key = "tfstate"
+     use_azuread_auth = true
   }
 }
 

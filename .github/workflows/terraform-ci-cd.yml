@@ -42,8 +42,8 @@ jobs:
         with:
           creds: |
             {
-              "clientId": "f6d63407-2359-4b4b-8a1d-82326d6ed05b",
-              "clientSecret": "2.m8Q~IQEoDSDzEZo~_EdTFsmOg8lKCsKpmUibFO",
+              "clientId": "d8ced92b-b8e9-46f3-93b1-6fb7f004a13d",
+              "clientSecret": "s638Q~eG70pJgTGb_b2gDlKxly-Ruzfp8Ux_.dpZ",
               "subscriptionId": "09313c5c-930a-453c-a90c-32ef23577e6b",
               "tenantId": "18d71235-29d4-4066-8c1c-633f3467b508"
             }
@@ -56,8 +56,8 @@ jobs:
       # --------------------------------------------------------
       - name: 'Terraform Init'
         env:
-          ARM_CLIENT_ID: "f6d63407-2359-4b4b-8a1d-82326d6ed05b"
-          ARM_CLIENT_SECRET: "2.m8Q~IQEoDSDzEZo~_EdTFsmOg8lKCsKpmUibFO"
+          ARM_CLIENT_ID: "d8ced92b-b8e9-46f3-93b1-6fb7f004a13d"
+          ARM_CLIENT_SECRET: "s638Q~eG70pJgTGb_b2gDlKxly-Ruzfp8Ux_.dpZ"
           ARM_SUBSCRIPTION_ID: "09313c5c-930a-453c-a90c-32ef23577e6b"
           ARM_TENANT_ID: "18d71235-29d4-4066-8c1c-633f3467b508"
           ARM_USE_CLI: "false"
@@ -66,8 +66,8 @@ jobs:
 
       - name: 'Terraform Validate'
         env:
-          ARM_CLIENT_ID: "f6d63407-2359-4b4b-8a1d-82326d6ed05b"
-          ARM_CLIENT_SECRET: "2.m8Q~IQEoDSDzEZo~_EdTFsmOg8lKCsKpmUibFO"
+          ARM_CLIENT_ID: "d8ced92b-b8e9-46f3-93b1-6fb7f004a13d"
+          ARM_CLIENT_SECRET: "s638Q~eG70pJgTGb_b2gDlKxly-Ruzfp8Ux_.dpZ"
           ARM_SUBSCRIPTION_ID: "09313c5c-930a-453c-a90c-32ef23577e6b"
           ARM_TENANT_ID: "18d71235-29d4-4066-8c1c-633f3467b508"
           ARM_USE_CLI: "false"
@@ -77,8 +77,8 @@ jobs:
       - name: 'Terraform Plan'
         id: plan
         env:
-          ARM_CLIENT_ID: "f6d63407-2359-4b4b-8a1d-82326d6ed05b"
-          ARM_CLIENT_SECRET: "2.m8Q~IQEoDSDzEZo~_EdTFsmOg8lKCsKpmUibFO"
+          ARM_CLIENT_ID: "d8ced92b-b8e9-46f3-93b1-6fb7f004a13d"
+          ARM_CLIENT_SECRET: "s638Q~eG70pJgTGb_b2gDlKxly-Ruzfp8Ux_.dpZ"
           ARM_SUBSCRIPTION_ID: "09313c5c-930a-453c-a90c-32ef23577e6b"
           ARM_TENANT_ID: "18d71235-29d4-4066-8c1c-633f3467b508"
           ARM_USE_CLI: "false"
@@ -152,8 +152,8 @@ jobs:
         with:
           creds: |
             {
-              "clientId": "f6d63407-2359-4b4b-8a1d-82326d6ed05b",
-              "clientSecret": "2.m8Q~IQEoDSDzEZo~_EdTFsmOg8lKCsKpmUibFO",
+              "clientId": "d8ced92b-b8e9-46f3-93b1-6fb7f004a13d",
+              "clientSecret": "s638Q~eG70pJgTGb_b2gDlKxly-Ruzfp8Ux_.dpZ",
               "subscriptionId": "09313c5c-930a-453c-a90c-32ef23577e6b",
               "tenantId": "18d71235-29d4-4066-8c1c-633f3467b508"
             }

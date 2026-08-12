@@ -6,10 +6,10 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name = "keyraj-storage"
-    storage_account_name = "backendstoragekeyraj"
-    container_name = "backendcontainer"
-    key = "tfstate"
+    resource_group_name = "b18g35-common-rg"
+    storage_account_name = "b18g35storageaccount"
+    container_name = "tfstatefiles"
+    key = "tfstate-ke"
      use_azuread_auth = true
      
   }

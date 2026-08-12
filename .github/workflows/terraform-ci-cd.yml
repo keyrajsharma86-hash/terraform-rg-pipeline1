@@ -50,9 +50,6 @@ jobs:
 
       # --------------------------------------------------------
       # Terraform Init
-      # IMPORTANT:
-      # ARM credentials force Terraform to use
-      # Service Principal instead of Azure CLI user authentication
       # --------------------------------------------------------
       - name: 'Terraform Init'
         env:
@@ -159,15 +156,6 @@ jobs:
             }
 
       # --------------------------------------------------------
-      # Download Terraform Plan
-      # --------------------------------------------------------
-      - name: 'Download Plan Artifact'
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan
-          path: .
-
-      # --------------------------------------------------------
       # Terraform Init
       # --------------------------------------------------------
       - name: 'Terraform Init'
@@ -181,7 +169,21 @@ jobs:
         run: terraform init -reconfigure
 
       # --------------------------------------------------------
-      # Terraform Apply
+      # 🔥 NEW STEP: Generate Plan in Apply Job
+      # --------------------------------------------------------
+      - name: 'Terraform Plan for Apply'
+        id: plan
+        env:
+          ARM_CLIENT_ID: "d8ced92b-b8e9-46f3-93b1-6fb7f004a13d"
+          ARM_CLIENT_SECRET: "s638Q~eG70pJgTGb_b2gDlKxly-Ruzfp8Ux_.dpZ"
+          ARM_SUBSCRIPTION_ID: "09313c5c-930a-453c-a90c-32ef23577e6b"
+          ARM_TENANT_ID: "18d71235-29d4-4066-8c1c-633f3467b508"
+          ARM_USE_CLI: "false"
+          ARM_USE_AZUREAD: "true"
+        run: terraform plan -out=tfplan
+
+      # --------------------------------------------------------
+      # 🔥 MODIFIED: Apply using the generated plan
       # --------------------------------------------------------
       - name: 'Terraform Apply'
         env:
